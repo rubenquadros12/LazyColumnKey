@@ -37,7 +37,7 @@ class MainActivity : ComponentActivity() {
             LazyColumnKeyTheme {
                 // A surface container using the 'background' color from the theme
                 Surface(color = MaterialTheme.colors.background) {
-                    TestLazy(onClick = {viewModel.addItem()}, items = viewModel.snapshotStateList)
+                    TestLazy(add = {viewModel.addItem()}, clear = {viewModel.clearDB()}, items = viewModel.snapshotStateList)
                 }
             }
         }
@@ -45,14 +45,14 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun TestLazy(onClick: () -> Unit, items: List<RandomIdiot>) {
+fun TestLazy(add: () -> Unit, clear: () -> Unit, items: List<RandomIdiot>) {
     ConstraintLayout(
         modifier = Modifier.fillMaxSize(),
         constraintSet = ConstraintSet {
             val list = createRefFor("list")
-            val button = createRefFor("button")
+            val buttons = createRefFor("buttons")
 
-            constrain(button) {
+            constrain(buttons) {
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
                 bottom.linkTo(parent.bottom)
@@ -62,7 +62,7 @@ fun TestLazy(onClick: () -> Unit, items: List<RandomIdiot>) {
                 top.linkTo(parent.top)
                 start.linkTo(parent.start)
                 end.linkTo(parent.end)
-                bottom.linkTo(button.top)
+                bottom.linkTo(buttons.top)
                 width = Dimension.fillToConstraints
                 height = Dimension.fillToConstraints
             }
@@ -78,13 +78,23 @@ fun TestLazy(onClick: () -> Unit, items: List<RandomIdiot>) {
             }
         }
 
-        Button(
-            modifier = Modifier
-                .fillMaxWidth()
-                .layoutId("button"),
-            onClick = { onClick.invoke() }
-        ) {
-            Text(text = "ADD")
+        Row(modifier = Modifier.fillMaxWidth().layoutId("buttons")) {
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                onClick = { clear.invoke() }
+            ) {
+                Text(text = "CLEAR")
+            }
+            Button(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1f),
+                onClick = { add.invoke() }
+            ) {
+                Text(text = "ADD")
+            }
         }
     }
 }

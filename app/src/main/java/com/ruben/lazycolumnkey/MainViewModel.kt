@@ -29,6 +29,13 @@ class MainViewModel @Inject constructor(private val repo: Repo): ViewModel() {
         }
     }
 
+    fun clearDB() {
+        viewModelScope.launch {
+            repo.clear()
+            snapshotStateList.clear()
+        }
+    }
+
     private fun getItemsInternal() {
         viewModelScope.launch {
             repo.getData().collect {
@@ -40,8 +47,4 @@ class MainViewModel @Inject constructor(private val repo: Repo): ViewModel() {
         }
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        viewModelScope.launch { repo.clear() }
-    }
 }
